@@ -3,7 +3,8 @@ import axios from 'axios';
 // L'URL de l'API est injectée via une variable d'environnement Vite (.env -> VITE_API_URL)
 // pour pouvoir pointer facilement vers localhost en dev et vers l'API hébergée en prod.
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
-console.log('URL utilisée par le frontend :', API_URL);
+console.log('VITE_API_URL =', import.meta.env.VITE_API_URL);
+console.log('VITE_TEST =', import.meta.env.VITE_TEST);
 
 const api = axios.create({ baseURL: API_URL });
 
