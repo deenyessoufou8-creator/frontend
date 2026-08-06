@@ -51,6 +51,11 @@ export default function DetailCampagne() {
   const pourcentage = campagne.budget_total > 0 ? Math.round((campagne.budget_restant / campagne.budget_total) * 100) : 0;
   const coutMoyenPour1000Vues = vues_cumulees > 0 ? (budget_depense / vues_cumulees) * 1000 : 0;
 
+  const vuesCible = campagne.cpm > 0 ? (Number(campagne.budget_total) / Number(campagne.cpm)) * 1000 : 0;
+  const vuesRestantes = Math.max(vuesCible - vues_cumulees, 0);
+  const pourcentageVues = vuesCible > 0 ? Math.min(Math.round((vues_cumulees / vuesCible) * 100), 100) : 0;
+  const estTerminee = campagne.statut === 'terminee';
+
   return (
     <div>
       <Link to="/mes-campagnes" style={{ fontSize: 12.5, color: 'var(--muted)', textDecoration: 'none' }}>← Retour à mes campagnes</Link>
@@ -60,14 +65,30 @@ export default function DetailCampagne() {
           <h1 className="page-title">{campagne.titre}</h1>
           <p className="subtitle">{campagne.categorie || 'Sans catégorie'}</p>
         </div>
-        <span className="tag">{LABELS_STATUT_CAMPAGNE[campagne.statut] || campagne.statut}</span>
+        <span className="tag" style={estTerminee ? { background: 'rgba(255,177,0,0.2)' } : {}}>
+          {estTerminee ? '✓ Terminée' : (LABELS_STATUT_CAMPAGNE[campagne.statut] || campagne.statut)}
+        </span>
+      </div>
+
+      <div className="card" style={{ marginBottom: 24 }}>
+        <div className="hero-label">OBJECTIF DE VUES {estTerminee ? '— ATTEINT' : ''}</div>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
+          <span className="hero-value" style={{ fontSize: 28 }}>{fmt(vues_cumulees)}</span>
+          <span style={{ color: 'var(--muted)', fontSize: 15 }}>/ {fmt(vuesCible)} vues estimées</span>
+        </div>
+        <div className="progress-row"><span>Progression</span><span>{pourcentageVues}%</span></div>
+        <div className="progress-bar"><div className="progress-fill" style={{ width: `${pourcentageVues}%` }} /></div>
+        <div style={{ fontSize: 12.5, color: estTerminee ? 'var(--gold)' : 'var(--muted)', marginTop: 4 }}>
+          {estTerminee
+            ? "Objectif atteint — budget entièrement distribué aux créateurs."
+            : `Il reste environ ${fmt(vuesRestantes)} vues à générer pour épuiser le budget.`}
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12, marginBottom: 24 }}>
         <StatCard label="Budget total" valeur={`${fmt(campagne.budget_total)} F`} />
         <StatCard label="Budget dépensé" valeur={`${fmt(budget_depense)} F`} accent="gold" />
         <StatCard label="Budget restant" valeur={`${fmt(campagne.budget_restant)} F`} />
-        <StatCard label="Vues cumulées" valeur={fmt(vues_cumulees)} accent="gold" />
         <StatCard label="Nb soumissions" valeur={soumissions.length} />
       </div>
 

@@ -55,12 +55,17 @@ export default function MesCampagnes() {
 
       <div className="grid">
         {campagnes.map((c) => {
-          const pourcentage = c.budget_total > 0 ? Math.round((c.budget_restant / c.budget_total) * 100) : 0;
+          const vuesCible = c.cpm > 0 ? (Number(c.budget_total) / Number(c.cpm)) * 1000 : 0;
+          const vuesCumulees = Number(c.vues_cumulees || 0);
+          const pourcentageVues = vuesCible > 0 ? Math.min(Math.round((vuesCumulees / vuesCible) * 100), 100) : 0;
+          const estTerminee = c.statut === 'terminee';
           return (
             <Link to={`/mes-campagnes/${c.id}`} className="card" key={c.id} style={{ display: 'block', textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15.5 }}>{c.titre}</div>
-                <span className="tag">{LABELS_STATUT[c.statut] || c.statut}</span>
+                <span className="tag" style={estTerminee ? { background: 'rgba(255,177,0,0.2)' } : {}}>
+                  {estTerminee ? '✓ Terminée' : (LABELS_STATUT[c.statut] || c.statut)}
+                </span>
               </div>
 
               <div className="cpm-ticket">
@@ -69,10 +74,10 @@ export default function MesCampagnes() {
               </div>
 
               <div className="progress-row">
-                <span>Budget restant</span>
-                <span>{fmt(c.budget_restant)} / {fmt(c.budget_total)} FCFA</span>
+                <span>Vues</span>
+                <span>{fmt(vuesCumulees)} / {fmt(vuesCible)} (estimé)</span>
               </div>
-              <div className="progress-bar"><div className="progress-fill" style={{ width: `${pourcentage}%` }} /></div>
+              <div className="progress-bar"><div className="progress-fill" style={{ width: `${pourcentageVues}%` }} /></div>
 
               {c.statut === 'brouillon' && (
                 <p style={{ fontSize: 12, color: 'var(--coral)', margin: '8px 0 0' }}>
