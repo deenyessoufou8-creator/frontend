@@ -12,6 +12,8 @@ export default function Marketplace() {
   const [chargement, setChargement] = useState(true);
   const [erreur, setErreur] = useState(null);
   const [campagneOuverte, setCampagneOuverte] = useState(null);
+  const [categorieActive, setCategorieActive] = useState('Toutes');
+  const [tri, setTri] = useState('recent');
 
   async function charger() {
     setChargement(true);
@@ -27,6 +29,19 @@ export default function Marketplace() {
 
   useEffect(() => { charger(); }, []);
 
+  const categories = ['Toutes', ...Array.from(new Set(campagnes.map((c) => c.categorie).filter(Boolean)))];
+
+  let campagnesAffichees = categorieActive === 'Toutes'
+    ? campagnes
+    : campagnes.filter((c) => c.categorie === categorieActive);
+
+  campagnesAffichees = [...campagnesAffichees].sort((a, b) => {
+    if (tri === 'cpm_desc') return Number(b.cpm) - Number(a.cpm);
+    if (tri === 'cpm_asc') return Number(a.cpm) - Number(b.cpm);
+    if (tri === 'budget_desc') return Number(b.budget_restant) - Number(a.budget_restant);
+    return 0;
+  });
+
   return (
     <div>
       <h1 className="page-title">Campagnes actives</h1>
@@ -35,12 +50,35 @@ export default function Marketplace() {
       {erreur && <div className="error-banner">{erreur}</div>}
       {chargement && <p style={{ color: 'var(--muted)' }}>Chargement...</p>}
 
+      {!chargement && campagnes.length > 0 && (
+        <>
+          <div className="chips">
+            {categories.map((cat) => (
+              <div key={cat} className={`chip ${categorieActive === cat ? 'on' : ''}`} style={{ cursor: 'pointer' }} onClick={() => setCategorieActive(cat)}>
+                {cat}
+              </div>
+            ))}
+          </div>
+          <div style={{ marginBottom: 18 }}>
+            <select value={tri} onChange={(e) => setTri(e.target.value)} style={{ width: 'auto', fontSize: 12.5, padding: '8px 10px' }}>
+              <option value="recent">Plus récentes</option>
+              <option value="cpm_desc">CPM le plus élevé</option>
+              <option value="cpm_asc">CPM le plus bas</option>
+              <option value="budget_desc">Budget restant le plus élevé</option>
+            </select>
+          </div>
+        </>
+      )}
+
       {!chargement && campagnes.length === 0 && (
         <p style={{ color: 'var(--muted)' }}>Aucune campagne active pour le moment.</p>
       )}
+      {!chargement && campagnes.length > 0 && campagnesAffichees.length === 0 && (
+        <p style={{ color: 'var(--muted)' }}>Aucune campagne dans cette catégorie.</p>
+      )}
 
       <div className="grid">
-        {campagnes.map((c) => {
+        {campagnesAffichees.map((c) => {
           const pourcentage = Math.round((c.budget_restant / c.budget_total) * 100);
           return (
             <div className="card" key={c.id}>

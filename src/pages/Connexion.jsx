@@ -52,6 +52,11 @@ export default function Connexion() {
 
       <div className="center-link">
         Pas encore de compte ? <Link to="/inscription" style={{ color: 'var(--gold)' }}>Créer un compte</Link>
+        <div className="center-link" style={{ marginTop: 8, fontSize: 11 }}>
+        <Link to="/cgu" style={{ color: 'var(--muted)' }}>CGU</Link>
+        {' · '}
+        <Link to="/confidentialite" style={{ color: 'var(--muted)' }}>Confidentialité</Link>
+      </div>
       </div>
     </div>
   );

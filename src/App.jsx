@@ -10,6 +10,8 @@ import TableauDeBordMarque from './pages/TableauDeBordMarque';
 import CreerCampagne from './pages/CreerCampagne';
 import TableauDeBord from './pages/TableauDeBord';
 import Admin from './pages/Admin';
+import CGU from './pages/CGU';
+import Confidentialite from './pages/Confidentialite';
 
 export default function App() {
   return (
@@ -18,6 +20,8 @@ export default function App() {
         <Routes>
           <Route path="/connexion" element={<Connexion />} />
           <Route path="/inscription" element={<Inscription />} />
+          <Route path="/cgu" element={<CGU />} />
+          <Route path="/confidentialite" element={<Confidentialite />} />
 
           <Route element={<Layout />}>
             <Route path="/marketplace" element={<Marketplace />} />

@@ -1,6 +1,7 @@
 import { Link, useLocation, Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import StatsBadge from './StatsBadge';
+import Notifications from './Notifications';
 
 export default function Layout() {
   const { utilisateur, deconnexion } = useAuth();
@@ -34,6 +35,7 @@ export default function Layout() {
         </nav>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <StatsBadge />
+          <Notifications />
           <span className="wallet-chip">{utilisateur.nom}</span>
           <button className="btn btn-ghost" onClick={deconnexion}>Se déconnecter</button>
         </div>
