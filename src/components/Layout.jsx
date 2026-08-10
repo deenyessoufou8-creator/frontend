@@ -27,6 +27,7 @@ export default function Layout() {
             <>
               <Link to="/marketplace" className={isActive('/marketplace') ? 'active' : ''}>Marketplace</Link>
               <Link to="/tableau-de-bord" className={isActive('/tableau-de-bord') ? 'active' : ''}>Tableau de bord</Link>
+              <Link to="/mon-profil" className={isActive('/mon-profil') ? 'active' : ''}>Mon profil</Link>
             </>
           )}
           {utilisateur.role === 'admin' && (
@@ -41,6 +42,16 @@ export default function Layout() {
         </div>
       </div>
       <Outlet />
+
+      <footer style={{ borderTop: '1px solid var(--line)', marginTop: 48, padding: '20px 0', textAlign: 'center' }}>
+        <div style={{ fontSize: 11.5, color: 'var(--muted)' }}>
+          <Link to="/cgu" style={{ color: 'var(--muted)' }}>CGU</Link>
+          {' · '}
+          <Link to="/confidentialite" style={{ color: 'var(--muted)' }}>Confidentialité</Link>
+          {' · '}
+          <Link to="/faq" style={{ color: 'var(--muted)' }}>FAQ</Link>
+        </div>
+      </footer>
     </div>
   );
 }

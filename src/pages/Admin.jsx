@@ -353,13 +353,14 @@ function OngletBilan() {
           {createurs.length > 0 && (
             <table>
               <thead>
-                <tr><th>Nom</th><th>Contact</th><th>Soumissions</th><th>Vues</th><th>Solde</th><th>En attente</th></tr>
+                <tr><th>Nom</th><th>Contact</th><th>Pays</th><th>Soumissions</th><th>Vues</th><th>Solde</th><th>En attente</th></tr>
               </thead>
               <tbody>
                 {createurs.map((c) => (
                   <tr key={c.id} onClick={() => setCreateurSelectionne(c.id)} style={{ cursor: 'pointer' }}>
-                    <td>{c.nom}</td>
+                    <td>{c.prenom ? `${c.prenom} ${c.nom}` : c.nom}</td>
                     <td style={{ color: 'var(--muted)' }}>{c.telephone}</td>
+                    <td style={{ color: 'var(--muted)' }}>{c.pays || '—'}</td>
                     <td className="mono">{c.nombre_soumissions}</td>
                     <td className="mono">{fmt(c.vues_cumulees)}</td>
                     <td className="mono gold">{fmt(c.wallet_solde)} F</td>
@@ -476,8 +477,16 @@ function DetailCreateurAdmin({ id, onRetour }) {
       {chargement && <p style={{ color: 'var(--muted)' }}>Chargement...</p>}
       {donnees && (
         <>
-          <h1 className="page-title">{donnees.info.nom}</h1>
+          <h1 className="page-title">{donnees.info.prenom ? `${donnees.info.prenom} ${donnees.info.nom}` : donnees.info.nom}</h1>
           <p className="subtitle">{donnees.info.telephone} · inscrit le {new Date(donnees.info.cree_le).toLocaleDateString('fr-FR')}</p>
+
+          <div className="card" style={{ marginBottom: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 14 }}>
+              <div><div style={{ fontSize: 11, color: 'var(--muted)' }}>Email</div><div style={{ fontSize: 13 }}>{donnees.info.email || '—'}</div></div>
+              <div><div style={{ fontSize: 11, color: 'var(--muted)' }}>Pays</div><div style={{ fontSize: 13 }}>{donnees.info.pays || '—'}</div></div>
+              <div><div style={{ fontSize: 11, color: 'var(--muted)' }}>Adresse</div><div style={{ fontSize: 13 }}>{donnees.info.adresse || '—'}</div></div>
+            </div>
+          </div>
 
           <div className="hero-ticket">
             <div className="hero-label">SOLDE DISPONIBLE</div>

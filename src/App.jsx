@@ -9,9 +9,11 @@ import DetailCampagne from './pages/DetailCampagne';
 import TableauDeBordMarque from './pages/TableauDeBordMarque';
 import CreerCampagne from './pages/CreerCampagne';
 import TableauDeBord from './pages/TableauDeBord';
+import MonProfil from './pages/MonProfil';
 import Admin from './pages/Admin';
 import CGU from './pages/CGU';
 import Confidentialite from './pages/Confidentialite';
+import FAQ from './pages/FAQ';
 
 export default function App() {
   return (
@@ -22,6 +24,7 @@ export default function App() {
           <Route path="/inscription" element={<Inscription />} />
           <Route path="/cgu" element={<CGU />} />
           <Route path="/confidentialite" element={<Confidentialite />} />
+          <Route path="/faq" element={<FAQ />} />
 
           <Route element={<Layout />}>
             <Route path="/marketplace" element={<Marketplace />} />
@@ -30,6 +33,7 @@ export default function App() {
             <Route path="/tableau-de-bord-marque" element={<TableauDeBordMarque />} />
             <Route path="/creer-campagne" element={<CreerCampagne />} />
             <Route path="/tableau-de-bord" element={<TableauDeBord />} />
+            <Route path="/mon-profil" element={<MonProfil />} />
             <Route path="/admin" element={<Admin />} />
           </Route>
 
