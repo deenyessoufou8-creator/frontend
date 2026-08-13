@@ -50,6 +50,9 @@ export default function Connexion() {
         </button>
       </form>
 
+      <div className="center-link">
+        Pas encore de compte ? <Link to="/inscription" style={{ color: 'var(--gold)' }}>Créer un compte</Link>
+      </div>
       <div className="center-link" style={{ marginTop: 8, fontSize: 11 }}>
         <Link to="/cgu" style={{ color: 'var(--muted)' }}>CGU</Link>
         {' · '}
