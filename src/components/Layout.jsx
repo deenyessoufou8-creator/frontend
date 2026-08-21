@@ -1,4 +1,3 @@
-cat > /home/claude/frontend/src/components/Layout.jsx << 'EOF'
 import { Link, useLocation, Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Notifications from './Notifications';
@@ -58,8 +57,3 @@ export default function Layout() {
     </div>
   );
 }
-EOF
-echo done
-Sortie
-
-done
