@@ -1,7 +1,8 @@
+cat > /home/claude/frontend/src/components/Layout.jsx << 'EOF'
 import { Link, useLocation, Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import StatsBadge from './StatsBadge';
 import Notifications from './Notifications';
+import BandeauDemo from './BandeauDemo';
 
 export default function Layout() {
   const { utilisateur, deconnexion } = useAuth();
@@ -35,12 +36,14 @@ export default function Layout() {
           )}
         </nav>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <StatsBadge />
           <Notifications />
           <span className="wallet-chip">{utilisateur.nom}</span>
           <button className="btn btn-ghost" onClick={deconnexion}>Se déconnecter</button>
         </div>
       </div>
+
+      <BandeauDemo />
+
       <Outlet />
 
       <footer style={{ borderTop: '1px solid var(--line)', marginTop: 48, padding: '20px 0', textAlign: 'center' }}>
@@ -55,3 +58,8 @@ export default function Layout() {
     </div>
   );
 }
+EOF
+echo done
+Sortie
+
+done

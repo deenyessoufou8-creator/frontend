@@ -69,7 +69,7 @@ export default function TableauDeBord() {
           </div>
 
           {!afficherRetrait ? (
-            <button className="btn btn-ghost" onClick={() => setAfficherRetrait(true)}>Retirer vers Mobile Money</button>
+            <button className="btn btn-ghost" onClick={() => setAfficherRetrait(true)}>Retirer vers Mobile Money (démo)</button>
           ) : (
             <FormulaireRetrait solde={wallet.solde_disponible} onTermine={() => { setAfficherRetrait(false); charger(); }} onAnnuler={() => setAfficherRetrait(false)} />
           )}

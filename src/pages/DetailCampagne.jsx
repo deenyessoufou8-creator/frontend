@@ -117,7 +117,7 @@ export default function DetailCampagne() {
             Cette campagne n'est pas encore visible des créateurs — les fonds n'ont pas été déposés.
           </p>
           <button className="btn btn-primary" disabled={action === 'depot'} onClick={deposerFonds}>
-            {action === 'depot' ? 'Traitement...' : 'Déposer les fonds et publier'}
+            {action === 'depot' ? 'Traitement...' : 'Déposer les fonds (démo) et publier'}
           </button>
         </div>
       )}
