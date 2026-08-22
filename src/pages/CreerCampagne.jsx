@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/client';
+import BoutonPaiementKkiapay from '../components/BoutonPaiementKkiapay';
 
 const TAUX_COMMISSION = 0.10; // affiché à titre indicatif ; le calcul réel est fait côté serveur
 const PLATEFORMES = ['tiktok', 'reels', 'shorts', 'x'];
@@ -56,21 +57,7 @@ export default function CreerCampagne() {
     }
   }
 
-  async function deposerFonds() {
-    setErreur(null);
-    setChargement(true);
-    try {
-      await api.post(`/campagnes/${campagneCreee.id}/deposer-fonds`, {
-        methode_paiement: 'mtn_momo',
-        reference_externe: `DEMO-${Date.now()}`,
-      });
-      setEtape('fait');
-    } catch (err) {
-      setErreur(err.response?.data?.erreur || 'Erreur lors du dépôt de fonds.');
-    } finally {
-      setChargement(false);
-    }
-  }
+
 
   if (etape === 'fait') {
     return (
@@ -86,14 +73,17 @@ export default function CreerCampagne() {
     return (
       <div className="card" style={{ maxWidth: 480 }}>
         <h1 className="page-title">Déposer les fonds</h1>
-        <p className="subtitle">Simulation de dépôt Mobile Money (intégration réelle à venir).</p>
+        <p className="subtitle">Paiement sécurisé via Mobile Money (Kkiapay).</p>
         {erreur && <div className="error-banner">{erreur}</div>}
-        <div className="summary-row" style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
+        <div className="summary-row" style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', marginBottom: 16 }}>
           <span>Budget à déposer</span><span className="mono">{fmt(recap.budget)} FCFA</span>
         </div>
-        <button className="btn btn-primary btn-block" style={{ marginTop: 16 }} onClick={deposerFonds} disabled={chargement}>
-          {chargement ? 'Traitement...' : 'Déposer via MTN MoMo (démo)'}
-        </button>
+        <BoutonPaiementKkiapay
+          campagneId={campagneCreee.id}
+          montant={recap.budget}
+          onSucces={() => setEtape('fait')}
+          onErreur={(msg) => setErreur(msg)}
+        />
       </div>
     );
   }

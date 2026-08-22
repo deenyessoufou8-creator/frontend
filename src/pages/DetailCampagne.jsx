@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../api/client';
+import BoutonPaiementKkiapay from '../components/BoutonPaiementKkiapay';
 
 function fmt(n) {
   return Math.round(Number(n)).toLocaleString('fr-FR');
@@ -58,20 +59,6 @@ export default function DetailCampagne() {
     }
   }
 
-  async function deposerFonds() {
-    setAction('depot');
-    try {
-      await api.post(`/campagnes/${id}/deposer-fonds`, {
-        methode_paiement: 'mtn_momo',
-        reference_externe: `DEMO-${Date.now()}`,
-      });
-      await charger();
-    } catch (err) {
-      alert(err.response?.data?.erreur || 'Erreur lors du dépôt de fonds.');
-    } finally {
-      setAction(null);
-    }
-  }
 
   if (chargement) return <p style={{ color: 'var(--muted)' }}>Chargement...</p>;
   if (erreur) return <div className="error-banner">{erreur}</div>;
@@ -116,9 +103,12 @@ export default function DetailCampagne() {
           <p style={{ margin: '0 0 12px', fontSize: 13, color: 'var(--coral)' }}>
             Cette campagne n'est pas encore visible des créateurs — les fonds n'ont pas été déposés.
           </p>
-          <button className="btn btn-primary" disabled={action === 'depot'} onClick={deposerFonds}>
-            {action === 'depot' ? 'Traitement...' : 'Déposer les fonds (démo) et publier'}
-          </button>
+          <BoutonPaiementKkiapay
+            campagneId={id}
+            montant={campagne.budget_total}
+            onSucces={() => charger()}
+            onErreur={(msg) => alert(msg)}
+          />
         </div>
       )}
 
