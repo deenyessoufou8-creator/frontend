@@ -9,6 +9,7 @@ const ONGLETS = [
   { id: 'en_attente', label: 'À approuver' },
   { id: 'en_comptage', label: 'Simuler des vues (test)' },
   { id: 'litiges', label: 'Litiges' },
+  { id: 'retraits', label: 'Retraits' },
   { id: 'bilan', label: 'Bilan des comptes' },
 ];
 
@@ -37,9 +38,94 @@ export default function Admin() {
         ))}
       </div>
 
-      {(onglet === 'en_attente' || onglet === 'en_comptage') && <OngletSoumissions statut={onglet} />}
+            {(onglet === 'en_attente' || onglet === 'en_comptage') && <OngletSoumissions statut={onglet} />}
       {onglet === 'litiges' && <OngletLitiges />}
+      {onglet === 'retraits' && <OngletRetraits />}
       {onglet === 'bilan' && <OngletBilan />}
+    </div>
+  );
+}
+function OngletRetraits() {
+  const [retraits, setRetraits] = useState([]);
+  const [chargement, setChargement] = useState(true);
+  const [erreur, setErreur] = useState(null);
+  const [enCours, setEnCours] = useState(null);
+
+  async function charger() {
+    setChargement(true);
+    try {
+      const { data } = await api.get('/admin/retraits', { params: { statut: 'en_attente' } });
+      setRetraits(data);
+    } catch (err) {
+      setErreur('Impossible de charger les retraits.');
+    } finally {
+      setChargement(false);
+    }
+  }
+
+  useEffect(() => { charger(); }, []);
+
+  async function marquerPaye(id) {
+    setEnCours(id);
+    try {
+      await api.patch(`/admin/retraits/${id}/marquer-paye`);
+      setRetraits((r) => r.filter((x) => x.id !== id));
+    } catch (err) {
+      setErreur(err.response?.data?.erreur || 'Erreur lors de la confirmation.');
+    } finally {
+      setEnCours(null);
+    }
+  }
+
+  async function marquerEchoue(id) {
+    const motif = window.prompt("Pourquoi ce retrait a-t-il échoué ? (le créateur sera remboursé automatiquement)");
+    if (!motif) return;
+    setEnCours(id);
+    try {
+      await api.patch(`/admin/retraits/${id}/marquer-echoue`, { motif });
+      setRetraits((r) => r.filter((x) => x.id !== id));
+    } catch (err) {
+      setErreur(err.response?.data?.erreur || 'Erreur lors du traitement.');
+    } finally {
+      setEnCours(null);
+    }
+  }
+
+  return (
+    <div>
+      <p style={{ fontSize: 12.5, color: 'var(--muted)', marginBottom: 16 }}>
+        Envoie manuellement le montant via ton application Mobile Money vers le numéro indiqué, puis confirme ici.
+      </p>
+      {erreur && <div className="error-banner">{erreur}</div>}
+      {chargement && <p style={{ color: 'var(--muted)' }}>Chargement...</p>}
+      {!chargement && retraits.length === 0 && <p style={{ color: 'var(--muted)' }}>Aucun retrait en attente. 🎉</p>}
+
+      <div className="grid">
+        {retraits.map((r) => (
+          <div className="card" key={r.id}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14.5 }}>{r.createur_nom}</div>
+              <span className="tag">{r.methode_paiement?.replace('_', ' ') || 'mobile money'}</span>
+            </div>
+            <div className="hero-value" style={{ fontSize: 22, marginBottom: 6 }}>
+              {Math.round(r.montant).toLocaleString('fr-FR')} FCFA
+            </div>
+            <div style={{ fontSize: 12.5, color: 'var(--muted)', marginBottom: 14 }}>
+              Vers : <span className="mono" style={{ color: 'var(--cream)' }}>{r.createur_telephone}</span>
+              <br />
+              Demandé le {new Date(r.cree_le).toLocaleString('fr-FR')}
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="btn btn-primary" style={{ flex: 1 }} disabled={enCours === r.id} onClick={() => marquerPaye(r.id)}>
+                {enCours === r.id ? '...' : '✓ Marquer payé'}
+              </button>
+              <button className="btn" style={{ flex: 1, background: 'transparent', border: '1px solid var(--coral)', color: 'var(--coral)' }} disabled={enCours === r.id} onClick={() => marquerEchoue(r.id)}>
+                Échoué
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
