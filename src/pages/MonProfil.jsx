@@ -16,7 +16,8 @@ export default function MonProfil() {
   const [succes, setSucces] = useState(false);
   const [envoi, setEnvoi] = useState(false);
 
-  const statutTiktok = searchParams.get('tiktok'); // 'connecte' | 'refuse' | 'erreur' | null
+  const statutTiktok = searchParams.get('tiktok');
+  const statutInstagram = searchParams.get('instagram');
 
   useEffect(() => {
     if (utilisateur.role !== 'createur') return;
@@ -55,9 +56,9 @@ export default function MonProfil() {
     }
   }
 
-  function connecterTiktok() {
+  function connecterReseau(reseau) {
     const token = localStorage.getItem('cr_token');
-    window.location.href = `${API_URL}/auth/tiktok/connexion?token=${encodeURIComponent(token)}`;
+    window.location.href = `${API_URL}/auth/${reseau}/connexion?token=${encodeURIComponent(token)}`;
   }
 
   if (chargement) return <p style={{ color: 'var(--muted)' }}>Chargement...</p>;
@@ -72,6 +73,9 @@ export default function MonProfil() {
       {statutTiktok === 'connecte' && <div className="success-banner">Compte TikTok connecté avec succès ✓</div>}
       {statutTiktok === 'refuse' && <div className="error-banner">Connexion TikTok annulée.</div>}
       {statutTiktok === 'erreur' && <div className="error-banner">Erreur lors de la connexion TikTok. Réessaie.</div>}
+      {statutInstagram === 'connecte' && <div className="success-banner">Compte Instagram connecté avec succès ✓</div>}
+      {statutInstagram === 'refuse' && <div className="error-banner">Connexion Instagram annulée.</div>}
+      {statutInstagram === 'erreur' && <div className="error-banner">Erreur lors de la connexion Instagram. Réessaie.</div>}
 
       {infoLecture && (
         <div className="card" style={{ maxWidth: 480, marginBottom: 20 }}>
@@ -89,9 +93,17 @@ export default function MonProfil() {
         <p style={{ fontSize: 12.5, color: 'var(--muted)', marginBottom: 14 }}>
           Connecte tes comptes pour que Fanka puisse compter automatiquement tes vues, sans que tu aies à envoyer de capture d'écran.
         </p>
-        <button type="button" className="btn btn-ghost" onClick={connecterTiktok}>
-          🔗 Connecter mon compte TikTok
-        </button>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <button type="button" className="btn btn-ghost" onClick={() => connecterReseau('tiktok')}>
+            🔗 Connecter TikTok
+          </button>
+          <button type="button" className="btn btn-ghost" onClick={() => connecterReseau('instagram')}>
+            🔗 Connecter Instagram
+          </button>
+        </div>
+        <p style={{ fontSize: 11, color: 'var(--muted)', marginTop: 10 }}>
+          Instagram nécessite un compte Business ou Creator (gratuit à activer depuis les réglages Instagram).
+        </p>
       </div>
 
       <form onSubmit={enregistrer} style={{ maxWidth: 480 }}>
